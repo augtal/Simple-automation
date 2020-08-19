@@ -4,10 +4,19 @@ from openpyxl.chart import BarChart, Reference
 
 def process_workbook(filename):
     workbook = xl.load_workbook(filename)
+
     finalSheet = workbook.create_sheet(title="Final")
+    topValues = ["Pirkejas", "Nr.", "Dokumento Data",
+                 "Suma", "Nuolaidu suma", "Pirkejo skola"]
+
+    finalSheet.delete_rows(1, 10)
+    finalSheet.append(topValues)
 
     for sheet in workbook:
+        if sheet.title == "Final":
+            continue
         for row in sheet.iter_rows(min_row=1, max_col=sheet.max_column, max_row=10):
+            values = []
             if row[0].value is None:
                 continue
             elif row[0].value.find("Ex"):
@@ -17,10 +26,11 @@ def process_workbook(filename):
                     if cell.value is None:
                         continue
                     else:
-                        print(cell.value)
+                        values.append(cell.value)
+            values.insert(-1, None)
+            finalSheet.append(values)
 
-    filename += "5"
-    # workbook.save(filename)
+    workbook.save("Test3.xlsx")
 
     print('Done')
 
